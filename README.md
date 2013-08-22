@@ -1,4 +1,4 @@
 cs2302
 ======
 
-cs2302 code
+Dylan's Java code for CS 2302
