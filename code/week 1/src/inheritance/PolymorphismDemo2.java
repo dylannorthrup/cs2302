@@ -12,7 +12,7 @@ public class PolymorphismDemo2 {
   }
 
   /** Display geometric object properties */
-  public static void displayObject(GeometricObject1 object) {
+  public static void displayObject(GeometricObject object) {
     System.out.println("Created on " + object.getDateCreated() +
       ". Color is " + object.getColor());
   }
