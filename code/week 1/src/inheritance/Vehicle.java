@@ -22,19 +22,16 @@ public class Vehicle extends Transportation {
     super(capacity, price);
     this.make = make;
     this.model = model;
-//    super.setPassengerCapacity(capacity);
-//    super.setPurchasePrice(price);
   }
 
   // Return string containing Vehicle information
   public String toString(){
-    String returnValue = "";
-    returnValue = returnValue + "Make: " + this.make + "\n";
-    returnValue = returnValue + "Model: " + this.model + "\n";
-    returnValue = returnValue + "Passenger Capacity: " + super.getPassengerCapacity() + "\n";
-    returnValue = returnValue + "Purchase Price: " + super.getPurchasePrice() + "\n";
-    return returnValue;
+    return("Make: " + this.make + "\n"
+        + "Model: " + this.model + "\n"
+        + "Passenger Capacity: " + super.getPassengerCapacity() + "\n"
+        + "Purchase Price: " + super.getPurchasePrice() + "\n");
   }
+  
   /**
    * @return the make
    */
