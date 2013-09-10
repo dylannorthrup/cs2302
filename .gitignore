@@ -19,3 +19,8 @@ local.properties
 .classpath
 .project
 .metadata
+
+# BTSync files
+.SyncArchive/
+.SyncID
+.SyncIgnore
