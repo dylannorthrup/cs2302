@@ -9,7 +9,12 @@ import java.awt.*;
 import javax.swing.*;
 
 public class HappyFace extends JApplet {
-   //  Draws a happy face.
+   /**
+   * 
+   */
+  private static final long serialVersionUID = -9188042118168513655L;
+
+  //  Draws a happy face.
    public void paint (Graphics g) {
      getContentPane().setBackground(Color.yellow);
      super.paint(g);

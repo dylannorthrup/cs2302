@@ -9,6 +9,10 @@ import java.awt.*;
 import javax.swing.*;
 
 public class HouseCar extends JApplet {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 7801971977876277930L;
   private int xCenter = 50;     // horizontal center point for house
   private int yTop = 25;        // vertical top point for house
   private Color bkgColor = Color.YELLOW;     // background color

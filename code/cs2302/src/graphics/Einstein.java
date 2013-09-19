@@ -10,7 +10,12 @@ import java.awt.*;
 import javax.swing.*;
 
 public class Einstein extends JApplet {
-   //  Draws a quotation by Albert Einstein among some shapes.
+   /**
+   * 
+   */
+  private static final long serialVersionUID = -7366668563807277610L;
+
+  //  Draws a quotation by Albert Einstein among some shapes.
    public void paint (Graphics g) {
      g.setColor(Color.red);
      g.drawRect (50, 50, 40, 40);    // square

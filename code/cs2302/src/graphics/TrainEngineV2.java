@@ -13,6 +13,11 @@ import java.awt.*;
 
 public class TrainEngineV2 extends JApplet {
 
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -6818567728536663065L;
+
   public void paint (Graphics g) {
     Polygon front = new Polygon();
     Polygon roof = new Polygon();

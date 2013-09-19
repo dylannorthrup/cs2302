@@ -10,6 +10,10 @@ import java.awt.*;
 import javax.swing.*;
 
 public class House extends JApplet {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 5610540540201752109L;
   private int xCenter = 50;     // horizontal center point for house
   private int yTop = 25;        // vertical top point for house
   private Color bkgColor = Color.YELLOW;     // background color

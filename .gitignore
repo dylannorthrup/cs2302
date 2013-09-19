@@ -24,3 +24,6 @@ local.properties
 .SyncArchive/
 .SyncID
 .SyncIgnore
+
+# Mac files
+.DS_Store
