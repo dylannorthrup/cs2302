@@ -12,4 +12,8 @@ class Employee extends Person {
   public Employee(String s) {
     System.out.println(s);
   }
+  
+  public String toString() {
+    return "Employee foo";
+  }
 }
