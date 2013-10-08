@@ -12,10 +12,10 @@ public class AndroidDoveFlockActivity extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_android_dove_flock);
+
     flockView = new AndroidDoveFlockView(this);
     setContentView(flockView);
     flockView.start();
-
   }
 
   @Override

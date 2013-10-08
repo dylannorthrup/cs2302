@@ -1,4 +1,4 @@
-package com.dylannorthrup.androidflockingdoves;
+package com.dylannorthrup.snowman;
 
 public abstract class BasicDove
 {
