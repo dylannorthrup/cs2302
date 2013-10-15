@@ -149,6 +149,7 @@ public class SnowmanOneGestureView extends View {
       waveOn = !waveOn;
       return true;
     }
+    @Override
     public boolean onSingleTapConfirmed(MotionEvent e) {
       waveOn = !waveOn;
       return true;

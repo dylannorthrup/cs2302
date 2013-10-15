@@ -1,4 +1,4 @@
-package com.dylannorthrup.snowman;
+package com.dylannorthrup.flyingbirds;
 
 public abstract class BasicDove
 {
@@ -285,8 +285,7 @@ public abstract class BasicDove
      * 
      * @return Returns the direction, position and movement offsets
      */
-   @Override
-  public String toString()
+   public String toString()
    {
       return("Dove direction=" + (getIsLeft() ? "Left" : "Right") + ", " + 
                "position=(" + (int)getX() + "," + (int)getY() + "), " +

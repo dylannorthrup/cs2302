@@ -1,4 +1,4 @@
-package com.dylannorthrup.snowman;
+package com.dylannorthrup.flyingbirds;
 
 /*
  * Course:      CS 2302
@@ -159,8 +159,8 @@ public class AndroidDoveFlockView extends View {
   // The GestureListener handlers
   private class GestureListener extends SimpleOnGestureListener {
     @Override
-    // Need to have this in here, even as a blank method.
     public boolean onDown(MotionEvent e) {
+      //      started = !started;
       return true;
     }
 
@@ -188,16 +188,6 @@ public class AndroidDoveFlockView extends View {
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
       showRadius = !showRadius;
-      // Used to totally clear out or add back doves. Doesn't do that anymore
-//      if(doves.size() > 0) {
-//        for(int i = doves.size(); i > 0; --i) {
-//          removeDove();
-//        }
-//      } else {
-//        for(int i = 0; i < DOVEAMT; ++i) {
-//          addDove(getContext());
-//        }
-//      }
       invalidate();
       return true;
     }

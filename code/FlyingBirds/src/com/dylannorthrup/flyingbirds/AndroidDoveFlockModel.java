@@ -1,4 +1,4 @@
-package com.dylannorthrup.snowman;
+package com.dylannorthrup.flyingbirds;
 
 import java.util.ArrayList;
 

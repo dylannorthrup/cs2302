@@ -1,4 +1,4 @@
-package com.dylannorthrup.snowman;
+package com.dylannorthrup.flyingbirds;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -121,6 +121,5 @@ public class AndroidDove extends BasicDove {
      /**
       * setdoves does nothing because we have a dove array
       */
-    @Override
     protected void setdoves() {}
 }
