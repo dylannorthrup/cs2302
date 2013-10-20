@@ -136,6 +136,7 @@ public class PhoneNumberGUI extends JPanel {
   // Sets up the button listeners accordingly
   //-------------------------------------------------
   private class ButtonListener implements ActionListener {
+    @Override
     public void actionPerformed (ActionEvent event) {
       try {
         // Clear things out here so we don't trigger exception when we're trying to clear things out
