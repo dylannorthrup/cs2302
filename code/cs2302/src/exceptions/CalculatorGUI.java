@@ -27,6 +27,7 @@ public class CalculatorGUI extends JPanel {
   private JLabel output;
 
   // Global variables to track state
+  private String keyPressed = "";           // DEBUG variable to track what key was pressed explicitly
   private double currentValue = 0;          // Current value for whatever we're working on
   private double inputValue = Double.NaN;   // What we have on screen for the current value
   private double previousIV = Double.NaN;   // Keeping track for repeated use of Equals button
@@ -174,24 +175,25 @@ public class CalculatorGUI extends JPanel {
     public void actionPerformed (ActionEvent event) {
       try {
         // Clear things out here so we don't trigger exception when we're trying to clear things out
-        if (event.getSource() == buttonClear) { currentValue = 0; inputValue = Double.NaN; previousOperator = NONE;}
+        if (event.getSource() == buttonClear) { keyPressed = "C"; currentValue = 0; 
+            inputValue = Double.NaN; previousOperator = NONE; displayedResults = false; }
         // Operator buttons
-        else if (event.getSource() == buttonMultiply) { doMathification(MULTIPLY); }
-        else if (event.getSource() == buttonAdd)      { doMathification(ADD); }
-        else if (event.getSource() == buttonDivide)   { doMathification(DIVIDE); }
-        else if (event.getSource() == buttonSubtract) { doMathification(SUBTRACT); }
-        else if (event.getSource() == buttonEquals)   { doMathification(EQUALS); }
+        else if (event.getSource() == buttonMultiply) { keyPressed = "*"; doMathification(MULTIPLY); }
+        else if (event.getSource() == buttonAdd)      { keyPressed = "+"; doMathification(ADD); }
+        else if (event.getSource() == buttonDivide)   { keyPressed = "/"; doMathification(DIVIDE); }
+        else if (event.getSource() == buttonSubtract) { keyPressed = "-"; doMathification(SUBTRACT); }
+        else if (event.getSource() == buttonEquals)   { keyPressed = "="; doMathification(EQUALS); }
         // If we haven't pressed clear or operation buttons, append the number to the current input value
-        else if (event.getSource() == button1) { updateInputValue(1); }
-        else if (event.getSource() == button2) { updateInputValue(2); }
-        else if (event.getSource() == button3) { updateInputValue(3); }
-        else if (event.getSource() == button4) { updateInputValue(4); }
-        else if (event.getSource() == button5) { updateInputValue(5); }
-        else if (event.getSource() == button6) { updateInputValue(6); }
-        else if (event.getSource() == button7) { updateInputValue(7); }
-        else if (event.getSource() == button8) { updateInputValue(8); }
-        else if (event.getSource() == button9) { updateInputValue(9); }
-        else if (event.getSource() == button0) { 
+        else if (event.getSource() == button1) { keyPressed = "1"; updateInputValue(1); }
+        else if (event.getSource() == button2) { keyPressed = "2"; updateInputValue(2); }
+        else if (event.getSource() == button3) { keyPressed = "3"; updateInputValue(3); }
+        else if (event.getSource() == button4) { keyPressed = "4"; updateInputValue(4); }
+        else if (event.getSource() == button5) { keyPressed = "5"; updateInputValue(5); }
+        else if (event.getSource() == button6) { keyPressed = "6"; updateInputValue(6); }
+        else if (event.getSource() == button7) { keyPressed = "7"; updateInputValue(7); }
+        else if (event.getSource() == button8) { keyPressed = "8"; updateInputValue(8); }
+        else if (event.getSource() == button9) { keyPressed = "9"; updateInputValue(9); }
+        else if (event.getSource() == button0) { keyPressed = "0";  
           // Can't divide by zero, so throw an exception if we try to
           if(previousOperator == DIVIDE && Double.isNaN(inputValue)) {
             throw new Exception("Dividing by Zero is not allowed");
@@ -220,7 +222,8 @@ public class CalculatorGUI extends JPanel {
   private void debugInfo(String msg, int dLvl) {
     if (DEBUG && dLvl <= debugLevel) {
       System.out.println("DEBUG: [" + msg 
-          + "] cv: " + currentValue 
+          + "] key pressed: '" + keyPressed
+          + "'; cv: " + currentValue 
           + "; iv: " + inputValue 
           + "; displayedResults: " + displayedResults 
           + "; goingNegative: " + goingNegative 
@@ -231,12 +234,13 @@ public class CalculatorGUI extends JPanel {
 
   // Method to do the heavy lifting of updating the calculator display
   private void updateDisplay() {
-    // If inputValue is NaN, we want to show current value. Otherwise, show inputValue
-    if(Double.isNaN(inputValue)) { 
-      //      displayStr = String.format("%f", currentValue);
-      displayStr = String.valueOf(currentValue);
+    // If equals sign was just pressed, show currentValue. If inputValue is NaN, we want to show 
+    // blank screen. Otherwise, show inputValue
+    if(displayedResults) {
+      displayStr = String.valueOf(currentValue);      
+    } else if(Double.isNaN(inputValue)) { 
+      displayStr = "";
     } else {
-      //      displayStr = String.format("%f", inputValue);
       displayStr = String.valueOf(inputValue);
     }
     // Strip off any trailing ".0"
@@ -300,13 +304,16 @@ public class CalculatorGUI extends JPanel {
         currOp = previousOperator;
         inputValue = previousIV;
 
-        // This is for handling inputting negative numbers using the minus sign
-      } else if(currOp == SUBTRACT && (currentValue == 0 || previousOperator == NONE )){
-        // Toggle goingNegative
-        if(goingNegative) {
-          goingNegative = false;
-        } else {
-          goingNegative = true;
+        // This is for handling inputting negative numbers using the minus sign. We do this for anything that wasn't a number
+      } else if(currOp == SUBTRACT){
+        if(! keyPressed.matches("\\d")) {
+          debugInfo("Matched non-numeric keypress");
+          // Toggle goingNegative
+          if(goingNegative) {
+            goingNegative = false;
+          } else {
+            goingNegative = true;
+          }
         }
         // and return
         return;
