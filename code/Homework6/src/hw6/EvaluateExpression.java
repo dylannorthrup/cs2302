@@ -133,7 +133,7 @@ public class EvaluateExpression {
         if (token.contentEquals("+")) {
           debugInfo("PHASE 1: Found a '" + token + "'", 2);
           debugInfo("PHASE 1: PLUS => Pushing top operand of stack 1, '" + stack1.peek() + "', onto stack2", 4);
-//          stack2.push(new BigDecimal(stack1.pop()));
+          //          stack2.push(new BigDecimal(stack1.pop()));
           validateAndPushToBDStack(stack1.pop(), stack2);
           // For the rest, handle them in their own methods
         } else if (token.contentEquals("-")) {
@@ -153,7 +153,7 @@ public class EvaluateExpression {
         debugInfo("PHASE 1: Found a '" + token + "'. Instigating Parenception", 2);
         BigDecimal bd = new BigDecimal(handleParenthesisExpression(stack1, token));
         debugInfo("PHASE 1: Got a result of '" + bd + "' from Parenception. Pushing that onto stack2", 2);
-//        stack2.push(bd);
+        //        stack2.push(bd);
         validateAndPushToBDStack(bd, stack2);
       } else if (token.contentEquals("(")) {
         debugInfo("PHASE 1: We've found a bare '" + token + "' which is bad");
@@ -166,7 +166,7 @@ public class EvaluateExpression {
           debugInfo("PHASE 1: Apparently the token '" + token + "' is not a number. DANGER WILL ROBINSON!!! Trowing 'Invalid Equation' Exception");
           throw new Exception("Invalid Equation");
         } else {
-//          stack2.push(new BigDecimal(token));
+          //          stack2.push(new BigDecimal(token));
           validateAndPushToBDStack(token, stack2);
         }
       }
@@ -222,7 +222,7 @@ public class EvaluateExpression {
         // If our next token is not an operator, put that onto stack2
       } else {
         debugInfo("*** doSubtraction() => Top operand is now " + stack1.peek() + ". Pushing that onto stack2", 4);
-//        stack2.push(new BigDecimal(stack1.pop()));
+        //        stack2.push(new BigDecimal(stack1.pop()));
         validateAndPushToBDStack(stack1.pop(), stack2);
       }
     }
@@ -247,7 +247,7 @@ public class EvaluateExpression {
     debugInfo("PHASE 1: MULTIPLYING => equation: " + bd1 + "*" + bd2, 4);
     bd1 = bd1.multiply(bd2);
     debugInfo("PHASE 1: MULTIPLYING => result: " + bd1, 4);
-//    stack2.push(bd1);
+    //    stack2.push(bd1);
     validateAndPushToBDStack(bd1, stack2);
   }
 
@@ -272,7 +272,7 @@ public class EvaluateExpression {
     // where x < .5 gets rounded down and everything else is rounded up
     bd1 = bd1.divide(bd2, 20, RoundingMode.HALF_UP).stripTrailingZeros();
     debugInfo("PHASE 1: DIVIDING => result: " + bd1, 4);
-//    stack2.push(bd1);
+    //    stack2.push(bd1);
     validateAndPushToBDStack(bd1, stack2);
   }
 
@@ -305,7 +305,7 @@ public class EvaluateExpression {
       debugInfo("PHASE 2: Adding together " + bd1 + " and " + bd2, 4);
       bd1 = bd1.add(bd2);
       debugInfo("PHASE 2: Result is " + bd1 + " which is going back on the stack", 4);
-//      stack2.push(bd1);
+      //      stack2.push(bd1);
       validateAndPushToBDStack(bd1, stack2);
     }
   }

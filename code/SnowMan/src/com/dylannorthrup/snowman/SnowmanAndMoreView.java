@@ -17,11 +17,14 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
+import android.graphics.Point;
 import android.graphics.RectF;
+import android.view.Display;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -29,7 +32,7 @@ import android.graphics.BitmapFactory;
 public class SnowmanAndMoreView extends View {
   private final int DELAY = 40;      // Delay in car movements
   private final int XMID = 240;
-  private final int YTOP = 200;
+  private int YTOP = 500;
   private final int STARTRADIUS = 200;          // Radius of doves from center
   private final double SIZERATIO = 0.5;         // Size ratio of doves
   private final int DOVEAMT = 5;                // Number of doves
@@ -55,14 +58,33 @@ public class SnowmanAndMoreView extends View {
 
   private int carWidth;              // Width of car
   private int scrWidth;   // Width of screen
-  private int doveHeight = 450;
+  private int scrHeight;  // Height of screen
+  private int doveHeight = scrHeight + 50;
 
   private Bitmap carRight, carLeft;  // Right and left car images
 
   private GestureDetector gestureDetector;  // detects gestures
 
+  //  // Extract out logic to set screen size variables
+  private void setScreenSize(Context context) {
+    WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+    Display display = wm.getDefaultDisplay();
+    //    Point outSize = (0,0);
+    //    display.getSize(outSize);
+    //    scrWidth = outSize.x;
+    //    scrHeight = outSize.y;
+    ////  deprecated method (pre API level 13)
+    scrWidth = display.getWidth();
+    scrHeight = display.getHeight();
+  }
+
   public SnowmanAndMoreView(Context context) {
     super(context);
+
+    // Set screen size variables here so we can use them later
+    setScreenSize(context);
+    
+    YTOP = scrHeight - 400;
 
     // creating new gesture detector
     gestureDetector = new GestureDetector(context, new GestureListener());
@@ -71,7 +93,9 @@ public class SnowmanAndMoreView extends View {
     carRight = BitmapFactory.decodeResource(res, R.drawable.carright);
     carLeft = BitmapFactory.decodeResource(res, R.drawable.carleft);
     carWidth = carLeft.getWidth();     // Get the car width
-    initRCarX = initRCarX - carWidth;
+    initRCarX = initRCarX - carWidth;   // And use that width to set where the right going cars should start off
+    initLCarY = scrHeight - 100;        // Set this based on screen height
+    initRCarY = initLCarY + 50;         // Just offset this from the previous calculation
     doves = new ArrayList<AndroidDoveFlockModel>(); // Init doves arrayList
     for (int i = 0; i < DOVEAMT; ++i)
       addDove(context);
@@ -217,7 +241,8 @@ public class SnowmanAndMoreView extends View {
     super.onSizeChanged(xNew, yNew, xOld, yOld);
     scrWidth = xNew;
     initLCarX = scrWidth; // Reset where the Left heading car starts from
-    //    scrHeight = yNew;
+    scrHeight = yNew;
+    doveHeight = scrHeight + 50;
   }
 
   // Drawing method
@@ -230,7 +255,7 @@ public class SnowmanAndMoreView extends View {
     paint.setStyle(Style.FILL);
 
     paint.setColor(Color.BLUE);
-    canvas.drawRect(0, 460, 480, 550, paint);   // ground
+    canvas.drawRect(0, doveHeight, scrWidth, scrHeight, paint);   // ground
 
     paint.setColor(Color.YELLOW);
     oval.set(-80, -80, 80, 80);
@@ -286,15 +311,15 @@ public class SnowmanAndMoreView extends View {
       }
     }
 
-    paint.setStyle(Style.FILL);
-    paint.setTextSize(24);
-    canvas.drawText("CS2302 Homework 4 for Dylan Northrup", 20, YTOP+400, paint);
-    canvas.drawText(leftCars.size() + " cars driving Left and " + rightCars.size() + " cars driving Right", 20, YTOP+435, paint);
-    if(doves.isEmpty()) {
-      canvas.drawText("doves is empty", 20, YTOP+470, paint);
-    } else {
-      canvas.drawText("There are " + doves.size() + " doves in the sky", 20, YTOP+470, paint);
-    }
+    //    paint.setStyle(Style.FILL);
+    //    paint.setTextSize(24);
+    //    canvas.drawText("CS2302 Homework 4 for Dylan Northrup", 20, YTOP+400, paint);
+    //    canvas.drawText(leftCars.size() + " cars driving Left and " + rightCars.size() + " cars driving Right", 20, YTOP+435, paint);
+    //    if(doves.isEmpty()) {
+    //      canvas.drawText("doves is empty", 20, YTOP+470, paint);
+    //    } else {
+    //      canvas.drawText("There are " + doves.size() + " doves in the sky", 20, YTOP+470, paint);
+    //    }
   }
 
   // The onTouchEvent handler
