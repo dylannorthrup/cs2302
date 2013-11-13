@@ -1,0 +1,65 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".RiddlerActivity" >
+
+    <TextView
+        android:id="@+id/headerTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="46dp"
+        android:text="@string/strHeader"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <Button
+        android:id="@id/answerBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/headerTxt"
+        android:layout_marginLeft="19dp"
+        android:layout_marginTop="39dp"
+        android:text="@string/strAnswer" />
+
+    <Button
+        android:id="@+id/nextBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/answerBtn"
+        android:layout_alignBottom="@id/answerBtn"
+        android:layout_toRightOf="@id/answerBtn"
+        android:text="@string/strNext" />
+
+    <TextView
+        android:id="@+id/riddleTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/headerTxt"
+        android:layout_alignRight="@+id/headerTxt"
+        android:layout_centerVertical="true"
+        android:background="#FFFF00"
+        android:minHeight="40dp"
+        android:textSize="16sp" />
+
+    <EditText
+        android:id="@+id/answerTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/riddleTxt"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="41dp"
+        android:background="#CCCCCC"
+        android:ems="10"
+        android:inputType="text" >
+
+        <requestFocus />
+    </EditText>
+
+</RelativeLayout>

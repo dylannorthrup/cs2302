@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">AndroidSalutation2</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="heading">I want your name</string>
+    <string name="helloStr">Hello</string>
+    <string name="firstNameStr">What\'s your first name?</string>
+    <string name="lastNameStr">What\'s your last name?</string>
+    <string name="genderStr">What\'s your gender?</string>
+    <string name="femaleStr">Female</string>
+    <string name="maleStr">Male</string>
+    <string name="salutationStr">Salutation</string>
+    <string name="firstNameHint">Type First Name</string>
+    <string name="LastNameHint">Type Last Name</string>
+    <string name="helloMs">Hello, Ms.</string>
+    <string name="helloMr">Hello, Mr.</string>
+    <string name="noName">[No Name]</string>
+
+</resources>

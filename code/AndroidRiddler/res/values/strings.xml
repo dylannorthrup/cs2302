@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">AndroidRiddler</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="strHeader">Answer The Riddle</string>
+    <string name="strNext">Next Riddle</string>
+    <string name="strAnswer">Answer Riddle</string>
+    <string name="strRiddle1">What is black and white and read all over?</string>
+    <string name="strRiddle2">What ceases to exist when you say its name?</string>
+    <string name="strRiddle3">Why did the witch buy a computer?</string>
+    <string name="strAnswer1">A sunburned penguin</string>
+    <string name="strAnswer2">Silence</string>
+    <string name="strAnswer3">To spell check</string>
+    
+</resources>

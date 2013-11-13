@@ -64,7 +64,7 @@
         android:layout_above="@+id/textView4"
         android:layout_alignLeft="@+id/firstNameTxtBx"
         android:ems="10"
-        android:hint="@string/lastNameHint"
+        android:hint="@string/LastNameHint"
         android:inputType="text"
         android:textSize="12sp"
         android:width="120dp" >

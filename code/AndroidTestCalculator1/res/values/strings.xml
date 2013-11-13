@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">AndroidSimpleCalculator</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+
+    <string name="btnStr1">1</string>
+    <string name="btnStr2">2</string>
+    <string name="btnStr3">3</string>
+    <string name="btnStr4">4</string>
+    <string name="btnStr5">5</string>
+    <string name="btnStr6">6</string>
+    <string name="btnStr7">7</string>
+    <string name="btnStr8">8</string>
+    <string name="btnStr9">9</string>
+    <string name="btnStr0">0</string>
+    <string name="btnStrClear">C</string>
+    <string name="btnStrPlus">+</string>
+    <string name="btnStrMinus">-</string>
+    <string name="btnStrDivide">/</string>
+    <string name="btnStrMultiply">*</string>
+    <string name="btnStrEquals">=</string>
+    <string name="hdrStrMessage">Android Simple Calculator</string>
+    
+</resources>
