@@ -7,23 +7,30 @@ import java.util.*;
 
 
 // Improvements
-// - levels
 // - asteroids breaking into smaller versions
-// - dynamic number of asteroids (based on level)
+// - dynamic number of bullets (based on level)
 // - different bullet patterns/power ups
 // - differently shaped player ships (for power ups)
 // - alien space ships
-// - add scoring
+
+// Bugs
+// - Continue firing, even if you hit another button
+// - Braking needs to stop regardless of orientation
 
 // Done
+// - add scoring
 // - making asteroids show up on edge of screen (not in middle)
+// - adding pausing
+// - levels
+// - dynamic number of asteroids (based on level)
 
 public class Asteroids extends Applet implements Runnable, KeyListener {
 
   private static final long serialVersionUID = 1L;
-  private static final int screenHeight = 640;
-  private static final int screenWidth = 480;
-  private static final int haloSize = 100;
+  private static final int screenWidth = 640;
+  private static final int screenHeight = 480;
+  private static final int haloSize = 150;
+  private static final int bulletAge = 300; // Number of ticks a bullet will live
 
   // Main thread becomes the game loop
   Thread gameloop;
@@ -34,29 +41,24 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
   // Main drawing object for the back buffer
   Graphics2D g2d;
 
-  // Toggle for drawing bounding boxes
-  boolean showBounds = false;
-
   // Flags for keys being pressed
   boolean turnLeft = false;
   boolean thrustOn = false;
   boolean turnRight = false;
   boolean breakOn = false;
+  boolean pause = false;
 
-  // Number of lives
-  int lives = 0;
-  
-  // Current level
-  int level = 1;
+  // data to keep track of over course of game
+  int lives;
+  int score;
+  int level;
+  int pointsPerAsteroid = 20;
 
-  // Asteroid array
+  // Asteroid and Bullet ArrayLists
   int ASTEROIDS = 20;
-  Asteroid[] ast = new Asteroid[ASTEROIDS];
-
-  // Bullet array
   int BULLETS = 10;
-  Bullet[] bullet = new Bullet[BULLETS];
-  int currentBullet = 0;
+  ArrayList<Asteroid> ast = new ArrayList<Asteroid>();
+  ArrayList<Bullet> bullets = new ArrayList<Bullet>();
 
   // The Player's ship
   Ship ship = new Ship();
@@ -69,36 +71,45 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
 
   // Applet init event
   public void init() {
-    backbuffer = new BufferedImage(screenHeight, screenWidth, BufferedImage.TYPE_INT_RGB);
+    backbuffer = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_RGB);
     g2d = backbuffer.createGraphics();
 
-    // Set up lives
+    // Reset game-long values
     lives = 3;
+    score = 0;
+    level = 1;
     ship.setAlive(true);
 
     // Set up the ship
     ship.setX(320);
     ship.setY(240);
 
-    // Set up the bullets
-    for (int n = 0; n < BULLETS; n++) {
-      bullet[n] = new Bullet();
-    }
-
     // Create the asteroids
-    for (int n = 0; n < ASTEROIDS; n++) {
-      ast[n] = new Asteroid();
-      ast[n].setRotationVelocity(rand.nextInt(3) + 1);
-      ast[n].setX(donutPosition(screenWidth));
-      ast[n].setY(donutPosition(screenHeight));
-      ast[n].setMoveAngle(rand.nextInt(360));
-      double ang = ast[n].getMoveAngle() - 90;
-      ast[n].setVelX(calcAngleMoveX(ang));
-      ast[n].setVelY(calcAngleMoveY(ang));
-    }
+    needMoreAsteroids();
 
     // Add input listener
     addKeyListener(this);
+  }
+
+  // Re-populate the asteroids
+  public void needMoreAsteroids() {
+    int asteroidNum = ASTEROIDS + (level * 3);
+    for (int i = 0; i < asteroidNum; i++) {
+      ast.add(addAsteroid());
+    }    
+  }
+
+  // Method for creating a new asteroid
+  private Asteroid addAsteroid() {
+    Asteroid a = new Asteroid();
+    a.setRotationVelocity(rand.nextInt(3) + 1);
+    a.setX(donutPosition(screenHeight));
+    a.setY(donutPosition(screenWidth));
+    a.setMoveAngle(rand.nextInt(360));
+    double ang = a.getMoveAngle() - 90;
+    a.setVelX(calcAngleMoveX(ang));
+    a.setVelY(calcAngleMoveY(ang));
+    return a;
   }
 
   // Set position in the donut section with the middle defined by
@@ -113,7 +124,23 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
     }
     return pos;
   }
-  
+
+  // Something to put status text on screen
+  private void updateHud(Graphics g) {
+    // Print some status info
+    double vx = ship.getVelX();
+    double vy = ship.getVelY();
+    double speed = Math.sqrt(Math.abs((vx*vx) + (vy*vy)));
+    g2d.setColor(Color.WHITE);
+    g2d.drawString("Lives: " + lives, 5, 10);
+    g2d.drawString("Score: " + score, screenWidth/2 - 50, 10);
+    g2d.drawString("Face angle: " + Math.round(ship.getFaceAngle()), 5, 40);
+    g2d.drawString("Ship X Velocity: " + ship.getVelX(), 5, 55);
+    g2d.drawString("Ship Y Velocity: " + ship.getVelY(), 5, 70);
+    g2d.drawString("Ship speed: " + speed, 5, 85);
+    g2d.drawString("Level: " + level, screenWidth - 100, 10);
+  }
+
   // Applet update event to redraw the screen
   public void update(Graphics g) {
     // start off transforms at identity
@@ -123,17 +150,8 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
     g2d.setPaint(Color.BLACK);
     g2d.fillRect(0, 0, getSize().width, getSize().height);
 
-    // Print some status info
-    double vx = ship.getVelX();
-    double vy = ship.getVelY();
-    double speed = Math.sqrt(Math.abs((vx*vx) + (vy*vy))); 
-    g2d.setColor(Color.WHITE);
-    g2d.drawString("Lives Remaining: " + lives, 5, 10);
-    g2d.drawString("Ship alive: " + ship.isAlive(), 5, 25);
-    g2d.drawString("Face angle: " + Math.round(ship.getFaceAngle()), 5, 40);
-    g2d.drawString("Ship X Velocity: " + ship.getVelX(), 5, 55);
-    g2d.drawString("Ship Y Velocity: " + ship.getVelY(), 5, 70);
-    g2d.drawString("Ship speed: " + speed, 5, 85);
+    // Print out information
+    updateHud(g);
 
     // Draw and paint
     drawShip();
@@ -150,11 +168,12 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
     }
     paint(g);
   }
+
   // drawShip called by applet update event
   public void drawShip() {
     // Move ship back to 0, 0 if it's not alive
     if(! ship.isAlive()) {
-      ship.setX(screenHeight/2); ship.setY(screenWidth/2);
+      ship.setX(screenWidth/2); ship.setY(screenHeight/2);
       ship.setVelX(0);  ship.setVelY(0);
       ship.setFaceAngle(Math.toRadians(0));
     }
@@ -169,42 +188,50 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
       g2d.fill(ship.getShape());      
     }
   }
+
   // drawBullets called by applet update event
   public void drawBullets() {
     // Iterate through bullet array
-    for(int i = 0; i < BULLETS; i++) {
+    for(Bullet b : bullets) {
       // Only draw bullets if they're alive
-      if(bullet[i].isAlive()) {
+      if(b.isAlive()) {
         g2d.setTransform(identity);
-        g2d.translate(bullet[i].getX(), bullet[i].getY());
+        g2d.translate(b.getX(), b.getY());
         g2d.setColor(Color.MAGENTA);
-        g2d.draw(bullet[i].getShape());
+        g2d.draw(b.getShape());
       }
     }
   }
+
   // drawAsteroids called by applet update event
   public void drawAsteroids() {
-    // Iterate through asteroids array
-    for(int i = 0; i < ASTEROIDS; i++) {
-      // Only draw asteroids if they are alive
-      if(ast[i].isAlive()) {
-        g2d.setTransform(identity);
-        g2d.translate(ast[i].getX(), ast[i].getY());
-        g2d.rotate(Math.toRadians(ast[i].getMoveAngle()));
-        g2d.setColor(Color.DARK_GRAY);
-        g2d.fill(ast[i].getShape());
+    // Check to see if we have any asteroids to iterate through
+    if(!ast.isEmpty()) {  
+      // If so, iterate through asteroids array
+      for(Asteroid a : ast) {
+        // Only draw asteroids if they are alive
+        if(a.isAlive()) {
+          g2d.setTransform(identity);
+          g2d.translate(a.getX(), a.getY());
+          g2d.rotate(Math.toRadians(a.getMoveAngle()));
+          g2d.setColor(Color.DARK_GRAY);
+          g2d.fill(a.getShape());
+        }
       }
     }
   }
+
   // repaint event - draw the back buffer
   public void paint(Graphics g) {
     g.drawImage(backbuffer, 0, 0, this);
   }
+
   // Thread start event - start the game loop running
   public void start() {
     gameloop = new Thread(this);
     gameloop.start();
   }
+
   // Thread run event (game loop)
   public void run() {
     Thread t = Thread.currentThread();
@@ -220,15 +247,24 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
       repaint();
     }
   }
+
   // Thread stop event
   public void stop() { gameloop = null; }
+  
   // Move and animate the objects in the game
   private void gameUpdate() {
-    updateShip();
-    updateBullets();
-    updateAsteroids();
-    checkCollisions();
+    if (!pause) {
+      updateShip();
+      updateBullets();
+      updateAsteroids();
+      checkCollisions();
+      cleanUpArrays();
+      if(ast.isEmpty()) {
+        needMoreAsteroids();
+      }
+    }
   }
+
   // Update Ship Location
   private void updateShip() {
     // Do ship modifications if booleans are set
@@ -268,79 +304,99 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
       ship.setY(-10);
     }
   }
+
   // Update Bullets' locations
   private void updateBullets() {
-    for (int i = 0; i < BULLETS; i++) {
+    // Constrain number of bullets to max number
+    if(bullets.size() > BULLETS) {
+      bullets.get(0).setAlive(false);
+    }
+    for (Bullet b : bullets) {
       // Only update if the bullet's alive
-      if(bullet[i].isAlive()) {
+      if(b.isAlive()) {
         // Update position
-        bullet[i].incX(bullet[i].getVelX());
-        bullet[i].incY(bullet[i].getVelY());
+        b.incX(b.getVelX());
+        b.incY(b.getVelY());
+
+        // Wrap bullet at screen edges
+        if(b.getX() < -20) {
+          b.setX(getSize().width + 20);
+        } else if (b.getX() > getSize().width + 20) {
+          b.setX(-20);
+        }
+        if(b.getY() < -20) {
+          b.setY(getSize().height + 20);
+        } else if (b.getY() > getSize().height + 20) {
+          b.setY(-20);
+        }
 
         // Bullet disappears at the edge of the screen
-        if( bullet[i].getX() < 0 ||
-            bullet[i].getX() > getSize().width ||
-            bullet[i].getY() < 0 ||
-            bullet[i].getY() > getSize().height ) {
-          bullet[i].setAlive(false);
+        if( b.age++ > bulletAge) {
+          b.setAlive(false);
         }
       }
     }
   }
+
   // Update Asteroid locations
   private void updateAsteroids() {
     // For each of the asteroids
-    for (int i = 0; i < ASTEROIDS; i++) {
+    for (Asteroid a : ast) {
       // Only update the asteroids that are alive
-      if(ast[i].isAlive()) {
+      if(a.isAlive()) {
         // Update positions
-        ast[i].incX(ast[i].getVelX());
-        ast[i].incY(ast[i].getVelY());
+        a.incX(a.getVelX());
+        a.incY(a.getVelY());
 
         // Wrap asteroid at screen edges
-        if(ast[i].getX() < -20) {
-          ast[i].setX(getSize().width + 20);
-        } else if (ast[i].getX() > getSize().width + 20) {
-          ast[i].setX(-20);
+        if(a.getX() < -20) {
+          a.setX(getSize().width + 20);
+        } else if (a.getX() > getSize().width + 20) {
+          a.setX(-20);
         }
-        if(ast[i].getY() < -20) {
-          ast[i].setY(getSize().height + 20);
-        } else if (ast[i].getY() > getSize().height + 20) {
-          ast[i].setY(-20);
+        if(a.getY() < -20) {
+          a.setY(getSize().height + 20);
+        } else if (a.getY() > getSize().height + 20) {
+          a.setY(-20);
         }
 
         // Update astroid's rotation
-        ast[i].incMoveAngle(ast[i].getRotationVelocity());
+        a.incMoveAngle(a.getRotationVelocity());
 
         // And keep angle within 0-359 degrees
-        if(ast[i].getMoveAngle() < 0) {
-          ast[i].setMoveAngle(360 - ast[i].getRotationVelocity());
-        } else if (ast[i].getMoveAngle() > 359) {
-          ast[i].setMoveAngle(ast[i].getRotationVelocity());
+        if(a.getMoveAngle() < 0) {
+          a.setMoveAngle(360 - a.getRotationVelocity());
+        } else if (a.getMoveAngle() > 359) {
+          a.setMoveAngle(a.getRotationVelocity());
         }        
       }
     }
   }
+
+  // Figure out if anything bumped into anything else
   private void checkCollisions() {
     // Iterate through the asteroids array
-    for (int i = 0; i < ASTEROIDS; i++) {
+    for (Asteroid a : ast) {
       // Only check if the asteroid's alive
-      if(ast[i].isAlive()) {
+      if(a.isAlive()) {
         // Check for collision with bullet
-        for (int j = 0; j < BULLETS; j++) {
+        for (Bullet b : bullets) {
           // Only check if bullet's alive
-          if(bullet[j].isAlive()) {
+          if(b.isAlive()) {
             // Perform collision check
-            if(ast[i].getBounds().contains(bullet[j].getX(), bullet[j].getY())) {
-              bullet[j].setAlive(false);
-              ast[i].setAlive(false);
+            if(a.getBounds().contains(b.getX(), b.getY())) {
+              // See if I can remove bullets and asteroids from ArrayLists here
+              b.setAlive(false);
+              a.setAlive(false);
+              // Also, add to points
+              score += pointsPerAsteroid;
               continue;
             }
           }
         }
         // Now, check for collision with ship
-        if(ast[i].getBounds().intersects(ship.getBounds()) && ship.isAlive()) {
-          ast[i].setAlive(false);
+        if(a.getBounds().intersects(ship.getBounds()) && ship.isAlive()) {
+          a.setAlive(false);
           lives--;
           System.out.println("Lives decreased to " + lives);
           if(lives < 1) {
@@ -357,14 +413,53 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
       }
     }
   }
+
+  private void cleanUpArrays() {
+    int idx;
+
+    // Clean up Asteroids
+    idx = 0;
+    while (idx < ast.size()) {
+      Asteroid a = ast.get(idx);
+      if(!a.isAlive()) {
+        // Remove item
+        ast.remove(idx);
+      } else {
+        ++idx;
+      }
+    }
+
+    // Clean up Bullets
+    idx = 0;
+    while (idx < bullets.size()) {
+      Bullet b = bullets.get(idx);
+      if(!b.isAlive()) {
+        // Remove item
+        bullets.remove(idx);
+      } else {
+        ++idx;
+      }
+    }
+  }
+
   public void gameOver() {
     System.out.println("GAME OVER");
     ship.setAlive(false);
+    // Get rid of all the bullets that might be hanging around
+    for(Bullet b : bullets) {
+      b.setAlive(false);
+    }
   }
+
   public void keyReleased(KeyEvent k) {
     int keyCode = k.getKeyCode();
 
     switch (keyCode) {
+
+    // Debug statement to add a new Asteroid to the field of play
+    case KeyEvent.VK_A:
+      ast.add(addAsteroid());
+      break;
 
     case KeyEvent.VK_LEFT:
     case KeyEvent.VK_J:
@@ -401,6 +496,13 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
         this.init();
       }
       break;
+
+    // Pause the game
+    case KeyEvent.VK_P:
+      if(pause) { pause = false; }
+      else { pause = true; }
+      break;
+      
     case KeyEvent.VK_LEFT:
     case KeyEvent.VK_J:
       //left arrow rotates ship left 5 degrees
@@ -431,31 +533,33 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
     case KeyEvent.VK_ENTER:
     case KeyEvent.VK_SPACE:
       //fire a bullet
-      currentBullet++;
-      if (currentBullet > BULLETS - 1) currentBullet = 0;
-      bullet[currentBullet].setAlive(true);
+      Bullet b = new Bullet();
+      b.setAlive(true);
 
       //point bullet in same direction ship is facing
-      bullet[currentBullet].setX(ship.getX());
-      bullet[currentBullet].setY(ship.getY());
-      bullet[currentBullet].setMoveAngle(ship.getFaceAngle() - 90);
+      b.setX(ship.getX());
+      b.setY(ship.getY());
+      b.setMoveAngle(ship.getFaceAngle() - 90);
 
       //fire bullet at angle of the ship
-      double angle = bullet[currentBullet].getMoveAngle();
+      double angle = b.getMoveAngle();
       double svx = ship.getVelX();
       double svy = ship.getVelY();
-      bullet[currentBullet].setVelX(svx + calcAngleMoveX(angle) * 2);
-      bullet[currentBullet].setVelY(svy + calcAngleMoveY(angle) * 2);
+      b.setVelX(svx + calcAngleMoveX(angle) * 2);
+      b.setVelY(svy + calcAngleMoveY(angle) * 2);
+      bullets.add(b);
       break;
 
     }
   }
+
   /*****************************************************
    * calculate X movement value based on direction angle
    *****************************************************/
   public double calcAngleMoveX(double angle) {
     return (double) (Math.cos(angle * Math.PI / 180));
   }
+
   /*****************************************************
    * calculate Y movement value based on direction angle
    *****************************************************/
@@ -465,7 +569,6 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
 
 
   //  public static void main(String[] args) {
-  //    // TODO Auto-generated method stub
   //
   //  }
 

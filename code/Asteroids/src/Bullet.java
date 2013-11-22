@@ -1,6 +1,9 @@
 import java.awt.*;
 
 public class Bullet extends BaseVectorShape {
+  // Add age attribute so we can constrain how long a bullet lives
+  int age = 0;
+  
 	// bounding rectangle
 	public Rectangle getBounds() {
 		Rectangle r;
