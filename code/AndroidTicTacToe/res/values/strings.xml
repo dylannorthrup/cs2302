@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">AndroidTicTacToe</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="welcometext">Welcome To Tic Tac Toe!</string>
+    <string name="oktext">OK</string>
+    <string name="canceltext">Cancel</string>
+    <string name="xturntext">X\'s Turn</string>
+    <string name="oturntext">O\'s Turn</string>
+    <string name="xwinstext">X Wins!</string>
+    <string name="owinstext">O Wins!</string>
+    <string name="adrawtext">It\'s a Draw!</string>
+    <string name="computerThinking">Computer\'s Thinking&#8230;</string>
+    <string name="whoisfirsttitle">Who is first?</string>
+    <string name="willyougofirst">Do you want to go first?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="yourTurn">Your Turn</string>
+
+</resources>

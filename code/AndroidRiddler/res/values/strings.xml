@@ -13,5 +13,6 @@
     <string name="strAnswer1">A sunburned penguin</string>
     <string name="strAnswer2">Silence</string>
     <string name="strAnswer3">To spell check</string>
+    <string name="strNotRight">Your Answer is not right yet!</string>
     
 </resources>
