@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">AndroidWeatherForecast</string>
+    <string name="app_name">The Weather</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="zipcode">Enter City Zip Code:</string>
@@ -10,7 +10,7 @@
     <string name="anotherzipcode">Another Zip Code</string>
     <string name="oktext">OK</string>
     <string name="canceltext">Cancel</string>
-    <string name="heading">The Weather Forecast</string>
+    <string name="heading">Requested Forecast</string>
     <string name="searching">Searching Zip Code&#8230;</string>
     <string name="lessinfo">Less Information</string>
     <string name="moreinfo">More Information</string>
