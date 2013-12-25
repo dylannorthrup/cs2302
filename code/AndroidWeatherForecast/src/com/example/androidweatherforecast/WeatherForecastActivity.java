@@ -11,6 +11,7 @@ package com.example.androidweatherforecast;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.graphics.Paint;
@@ -32,7 +33,9 @@ public class WeatherForecastActivity extends Activity {
   private LinearLayout weatherView;     // The view layout
   private EditText txtZipCode;
 
-  private String zipCodeStr = "30303";  // The zipcode string
+  public static final String PREFS_NAME = "ForecastPrefsFile";
+  private String zipCodeStr = "";  			// The zipcode string
+  private String defaultZipCode = "30303";  // The default zipcode (if they haven't chosen a different one)
 
   // Strings to load
   private String zipCodeErrStr = "";
@@ -52,6 +55,11 @@ public class WeatherForecastActivity extends Activity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_weather_forecast);
 
+    // Restore preferences
+    SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+    String zipPref = settings.getString("zipCode", defaultZipCode);
+    zipCodeStr = zipPref;
+    
     // The weather view layout
     weatherView = (LinearLayout) findViewById(R.id.weatherView);
 
@@ -74,9 +82,6 @@ public class WeatherForecastActivity extends Activity {
     zipCodeBtn.setOnClickListener(new View.OnClickListener() {
       public void onClick(View v) {
         getZipCode();
-//        // Update the view
-//        txtForeCast.setText("Forecast for " + zipCodeStr + "\n" + forecastStr + "\n");
-//        weatherView.invalidate();
       }
     });
 
@@ -162,9 +167,13 @@ public class WeatherForecastActivity extends Activity {
           Toast.makeText(getApplicationContext(),
               getString(R.string.zipcodereqtext),
               Toast.LENGTH_LONG).show();
-        } else  {  // if not empty, save it and end dialog
+        } else  {  // if not empty, save it, store it as the new ZipCode preference and end dialog
           zipCodeStr = zipStr;
           alertDialog.dismiss();
+          SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+          SharedPreferences.Editor ed = settings.edit();
+          ed.putString("zipCode", zipStr);
+          ed.commit();
         }
         // Add in lines to update forecast here. We do it here because 
         // this is called when we click 'Ok'
